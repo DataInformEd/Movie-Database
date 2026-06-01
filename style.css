@@ -1,0 +1,150 @@
+/* --- 1. BASE THEME & TYPOGRAPHY --- */
+:root {
+    --bg-color: #0f1014; /* Deep cinematic black/blue */
+    --card-bg: #1a1c23;
+    --accent: #e50914; /* Netflix-style red for buttons */
+    --text-main: #f5f5f1;
+    --text-muted: #8c8d90;
+    --font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+#app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* --- 2. SEARCH BAR --- */
+.search-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+input[type="text"], input[type="number"] {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #2a2c33;
+    color: white;
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+button {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:hover {
+    background-color: #f40612;
+    transform: translateY(-2px);
+}
+
+/* --- 3. MOVIE GRID LAYOUT --- */
+#movie-grid, #results-container {
+    display: grid;
+    /* This creates the responsive magic: cards will never be smaller than 250px */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* --- 4. MOVIE CARDS --- */
+#movie-grid > div, #results-container > div {
+    background-color: var(--card-bg);
+    border: none !important; /* Overriding the temporary JS border */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+#movie-grid > div:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+}
+
+/* Make images fill the card cleanly */
+#movie-grid img {
+    width: 100% !important;
+    height: 375px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+/* Spacing for text inside the cards */
+#movie-grid h3, #results-container h3 {
+    margin: 15px;
+    font-size: 1.2rem;
+}
+
+/* --- 5. REVIEWS SECTION --- */
+[id^="reviews-container"] {
+    background: rgba(0, 0, 0, 0.2) !important;
+    margin: 0 15px 15px 15px !important;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    flex-grow: 1; /* Pushes the input form to the bottom */
+}
+
+.review-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    background-color: #22242d;
+}
+
+.review-form input {
+    width: auto !important; /* Overriding inline JS styles */
+}
+
+/* --- 6. POPCORN RATING --- */
+.popcorn-rating {
+    display: flex;
+    gap: 8px;
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.popcorn {
+    /* Dimmed out by default */
+    filter: grayscale(100%) opacity(0.3);
+    transition: transform 0.1s, filter 0.2s;
+}
+
+/* These classes will be added by JavaScript when you hover or click */
+.popcorn.hover, .popcorn.selected {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.15);
+}
