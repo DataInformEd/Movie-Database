@@ -22,6 +22,8 @@ const exploreView = document.getElementById('explore-view');
 const addView = document.getElementById('add-view');
 const navExplore = document.getElementById('nav-explore');
 const navAdd = document.getElementById('nav-add');
+const navBrand = document.querySelector('.nav-brand'); // Grabs the logo
+const bulkImportSection = document.getElementById('bulk-import-section');
 
 const searchInput = document.getElementById('movie-search');
 const searchBtn = document.getElementById('search-btn');
@@ -39,6 +41,35 @@ const closeModal = document.getElementById('close-modal');
 // --- STATE VARIABLES ---
 let libraryData = []; 
 let activeGenre = "All";
+
+// --- SECRET DEVELOPER TOGGLE ---
+let brandClickCount = 0;
+let brandClickTimer;
+
+navBrand.addEventListener('click', () => {
+    brandClickCount++;
+    
+    // Clear the timer on every click
+    clearTimeout(brandClickTimer);
+    
+    // If clicked 3 times, toggle the wizard
+    if (brandClickCount >= 3) {
+        if (bulkImportSection.style.display === 'none') {
+            bulkImportSection.style.display = 'block';
+        } else {
+            bulkImportSection.style.display = 'none';
+        }
+        brandClickCount = 0; // Reset the counter
+    } else {
+        // If they stop clicking, reset the count after 1 second
+        brandClickTimer = setTimeout(() => {
+            brandClickCount = 0;
+        }, 1000);
+    }
+});
+
+
+
 
 // --- 1. NAVIGATION LOGIC ---
 navExplore.addEventListener('click', () => {
@@ -271,6 +302,7 @@ const csvFileInput = document.getElementById('csv-file');
 const runImportBtn = document.getElementById('run-import-btn');
 const importStatus = document.getElementById('import-status');
 
+if (runImportBtn) {
 runImportBtn.addEventListener('click', async () => {
     const file = csvFileInput.files[0];
     if (!file) {
@@ -362,3 +394,4 @@ runImportBtn.addEventListener('click', async () => {
 
     reader.readAsText(file);
 });
+}
