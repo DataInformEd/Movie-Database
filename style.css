@@ -182,3 +182,80 @@ button:hover {
 }
 
 .modal-poster { width: 150px; border-radius: 8px; }
+
+/* --- 9. NAVIGATION & SPA STYLES --- */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 15px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.nav-brand {
+    margin: 0;
+    font-size: 1.5rem;
+    border-bottom: none;
+    letter-spacing: 1px;
+}
+
+.nav-btn {
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: normal;
+    padding: 8px 15px;
+}
+
+.nav-btn.active {
+    color: white;
+    font-weight: bold;
+    border-bottom: 2px solid var(--accent);
+    border-radius: 0;
+}
+
+.nav-btn:hover { background: transparent; color: white; transform: none; }
+
+.view-hidden {
+    display: none !important;
+}
+
+/* --- 10. EXPLORE CONTROLS & PILLS --- */
+.control-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.control-bar input { flex-grow: 1; }
+.control-bar select {
+    background-color: #2a2c33; color: white; border: none; border-radius: 4px; padding: 0 15px;
+}
+
+.genre-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+    /* Hides scrollbar for clean look */
+    scrollbar-width: none; 
+}
+.genre-scroll::-webkit-scrollbar { display: none; }
+
+.genre-pill {
+    background-color: #2a2c33;
+    padding: 6px 16px;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.genre-pill:hover { background-color: #3a3c43; }
+.genre-pill.active { background-color: var(--accent); color: white; font-weight: bold; }
+
+/* Tag display on rows */
+.row-genres { font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;}

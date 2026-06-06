@@ -7,30 +7,42 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app-container">
-        <h1>My Movie Tracker</h1>
-        
-        <div class="search-section">
-            <input type="text" id="movie-search" placeholder="Search TMDB to add a movie...">
-            <button id="search-btn">Search TMDB</button>
+    <nav class="top-nav">
+        <h1 class="nav-brand">🎬 MyTracker</h1>
+        <div class="nav-links">
+            <button id="nav-explore" class="nav-btn active">Explore Library</button>
+            <button id="nav-add" class="nav-btn">Add Movie</button>
         </div>
-        <div id="results-container"></div>
+    </nav>
 
-        <hr>
-
-        <div id="library-section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>My Library</h2>
-                <select id="sort-select" style="padding: 8px; background: #2a2c33; color: white; border-radius: 4px; border: none;">
+    <div id="app-container">
+        
+        <div id="explore-view">
+            <div class="control-bar">
+                <input type="text" id="library-search" placeholder="Search my library...">
+                <select id="sort-select">
                     <option value="name_asc">Name (A-Z)</option>
                     <option value="name_desc">Name (Z-A)</option>
                     <option value="rating_desc">Highest Rated</option>
                     <option value="year_desc">Newest Release</option>
                 </select>
             </div>
+
+            <div id="genre-container" class="genre-scroll">
+                </div>
             
             <div id="movie-list" style="margin-top: 15px;"></div>
         </div>
+
+        <div id="add-view" class="view-hidden">
+            <h2 style="text-align: center; margin-bottom: 20px;">Add to Library</h2>
+            <div class="search-section">
+                <input type="text" id="movie-search" placeholder="Search TMDB for a new movie...">
+                <button id="search-btn">Search TMDB</button>
+            </div>
+            <div id="results-container"></div>
+        </div>
+
     </div>
 
     <div id="movie-modal" class="modal hidden">
