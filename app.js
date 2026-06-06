@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, setDoc, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyBWejOD76urF3z2GrUvaBcvsfQ9k1H4xxg",
@@ -12,6 +14,8 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 const TMDB_API_KEY = "e24be1ac2a69f6e039ecce8243dd0dd3"; // PASTE TMDB KEY HERE
 
 // --- TMDB GENRE MAP ---
@@ -37,6 +41,8 @@ const movieList = document.getElementById('movie-list');
 const modal = document.getElementById('movie-modal');
 const modalBody = document.getElementById('modal-body');
 const closeModal = document.getElementById('close-modal');
+
+
 
 // --- STATE VARIABLES ---
 let libraryData = []; 
@@ -69,7 +75,42 @@ navBrand.addEventListener('click', () => {
     }
 });
 
+// --- 0. AUTHENTICATION LOGIC ---
+const authBtn = document.getElementById('auth-btn');
+let currentUser = null;
 
+// Listen for login/logout
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        currentUser = user;
+        authBtn.innerText = "Logout";
+        navAdd.style.display = "inline-block"; // Reveal the Add tab
+        console.log("🔒 SECURE LOGIN SUCCESS. YOUR UID IS:", user.uid);
+    } else {
+        currentUser = null;
+        authBtn.innerText = "Admin Login";
+        navAdd.style.display = "none"; // Hide the Add tab
+        
+        // If they logout, force the view back to Explore
+        exploreView.classList.remove('view-hidden');
+        addView.classList.add('view-hidden');
+        navExplore.classList.add('active');
+        navAdd.classList.remove('active');
+    }
+});
+
+// Click the login/logout button
+authBtn.addEventListener('click', async () => {
+    if (currentUser) {
+        await signOut(auth);
+    } else {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+    }
+});
 
 
 // --- 1. NAVIGATION LOGIC ---
