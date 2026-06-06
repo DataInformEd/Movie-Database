@@ -261,3 +261,42 @@ button:hover {
 
 /* Tag display on rows */
 .row-genres { font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;}
+
+/* --- 11. MOBILE RESPONSIVENESS --- */
+@media (max-width: 600px) {
+    /* Stack the header vertically */
+    .top-nav {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    /* Center and neatly space the buttons */
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    /* Make buttons slightly larger for thumbs */
+    .nav-btn {
+        font-size: 0.95rem;
+        padding: 10px 15px;
+        flex-grow: 1; /* Makes them stretch to fill empty space */
+        text-align: center;
+    }
+
+    /* Force the Login/Logout button to its own full-width row */
+    #auth-btn {
+        margin-left: 0 !important; /* Overrides the inline HTML style */
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    /* Optional: Stack the Search and Sort dropdown so they aren't squished */
+    .control-bar {
+        flex-direction: column;
+    }
+}
