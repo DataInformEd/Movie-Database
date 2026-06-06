@@ -264,3 +264,101 @@ closeModal.addEventListener('click', () => modal.classList.add('hidden'));
 
 // Start app
 loadLibrary();
+
+
+// --- 6. BULK IMPORT WIZARD ---
+const csvFileInput = document.getElementById('csv-file');
+const runImportBtn = document.getElementById('run-import-btn');
+const importStatus = document.getElementById('import-status');
+
+runImportBtn.addEventListener('click', async () => {
+    const file = csvFileInput.files[0];
+    if (!file) {
+        alert("Please select a CSV file first!");
+        return;
+    }
+
+    // 1. Read the file
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const text = e.target.result;
+        // Split into lines and remove any empty ones
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        
+        // Remove the header row if it exists (checks if the first rating is a word, not a number)
+        const firstLineCols = lines[0].split(',');
+        if (isNaN(parseInt(firstLineCols[2]))) {
+            lines.shift(); 
+        }
+
+        importStatus.innerText = `Starting import of ${lines.length} movies... Please wait.`;
+        runImportBtn.disabled = true; // Prevent double clicks
+        
+        let successCount = 0;
+        let failCount = 0;
+
+        // 2. Loop through every row
+        for (let i = 0; i < lines.length; i++) {
+            // This Regex securely splits the CSV row, ignoring commas inside quotation marks
+            const columns = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
+            if (columns.length < 3) continue; // Skip broken rows
+
+            // Clean up the text (remove quotes from titles)
+            const title = columns[0].replace(/^"|"$/g, '').trim();
+            const year = columns[1].trim();
+            const rating = Number(columns[2].trim());
+
+            importStatus.innerText = `Searching TMDB for: ${title} (${year})...`;
+
+            try {
+                // Ping TMDB using the strict year filter for accuracy
+                const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&primary_release_year=${year}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    // Grab the absolute best match (the first result)
+                    const movie = data.results[0];
+                    const mappedGenres = movie.genre_ids ? movie.genre_ids.map(id => tmdbGenres[id]).filter(g => g) : [];
+
+                    // Save the Movie to Firebase
+                    await setDoc(doc(db, "movies", movie.id.toString()), {
+                        title: movie.title,
+                        release_year: movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : null,
+                        poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+                        genres: mappedGenres, 
+                        metadata: JSON.stringify(movie)
+                    });
+
+                    // Save your Review to Firebase
+                    await addDoc(collection(db, "reviews"), {
+                        movie_id: movie.id, 
+                        reviewer_name: "Me", 
+                        rating: rating, 
+                        review_text: "", // Empty string since this is a bulk numerical import
+                        timestamp: new Date()
+                    });
+
+                    successCount++;
+                } else {
+                    console.warn(`Could not find a TMDB match for: ${title} (${year})`);
+                    failCount++;
+                }
+            } catch (error) {
+                console.error(`Error importing ${title}:`, error);
+                failCount++;
+            }
+        }
+
+        // 3. Finish and refresh
+        importStatus.innerText = `✅ Import Complete! Successfully added: ${successCount}. Failed: ${failCount}.`;
+        csvFileInput.value = ''; // Clear the file input
+        runImportBtn.disabled = false;
+        
+        // Reload the library so all the new movies appear instantly
+        loadLibrary(); 
+    };
+
+    reader.readAsText(file);
+});
