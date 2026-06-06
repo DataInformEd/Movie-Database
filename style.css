@@ -199,6 +199,8 @@ button:hover {
     font-size: 1.5rem;
     border-bottom: none;
     letter-spacing: 1px;
+    cursor: pointer; /* Makes it look like a button */
+    user-select: none; /* Prevents text highlighting */
 }
 
 .nav-btn {

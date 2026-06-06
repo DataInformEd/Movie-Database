@@ -48,23 +48,24 @@ let brandClickTimer;
 
 navBrand.addEventListener('click', () => {
     brandClickCount++;
+    console.log(`Logo clicked! Count: ${brandClickCount}`); // Watch this in your console!
     
-    // Clear the timer on every click
     clearTimeout(brandClickTimer);
     
-    // If clicked 3 times, toggle the wizard
     if (brandClickCount >= 3) {
+        console.log("3 clicks reached! Toggling wizard...");
         if (bulkImportSection.style.display === 'none') {
             bulkImportSection.style.display = 'block';
         } else {
             bulkImportSection.style.display = 'none';
         }
-        brandClickCount = 0; // Reset the counter
+        brandClickCount = 0; 
     } else {
-        // If they stop clicking, reset the count after 1 second
+        // Increased from 1000ms to 2000ms (2 full seconds to get 3 clicks)
         brandClickTimer = setTimeout(() => {
+            console.log("Timer expired, resetting click count.");
             brandClickCount = 0;
-        }, 1000);
+        }, 2000); 
     }
 });
 
