@@ -133,10 +133,12 @@ navAdd.addEventListener('click', () => {
 searchBtn.addEventListener('click', async () => {
     const query = searchInput.value;
     if (!query) return;
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`;
     
+    // Fetch from TMDB
+    const url = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`;
     const response = await fetch(url);
     const data = await response.json();
+    
     resultsContainer.innerHTML = ''; 
 
     data.results.forEach(movie => {
@@ -150,15 +152,39 @@ searchBtn.addEventListener('click', async () => {
                          <button id="add-${movie.id}">Add to Library</button><hr>`;
         resultsContainer.appendChild(div);
         
+        // Add click listener
         document.getElementById(`add-${movie.id}`).addEventListener('click', async () => {
+            // 1. Save the movie to Firestore
             await setDoc(doc(db, "movies", movie.id.toString()), {
                 title: movie.title,
                 release_year: movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : null,
                 poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
-                genres: mappedGenres, // Saving the text array!
+                genres: mappedGenres,
                 metadata: JSON.stringify(movie)
             });
-            alert(`${movie.title} added! Switch to 'Explore' to view it.`);
+
+            // 2. Construct the movie object for the modal
+            const newlyAddedMovie = {
+                id: movie.id.toString(),
+                title: movie.title,
+                release_year: movie.release_date ? parseInt(movie.release_date.substring(0, 4)) : null,
+                poster_url: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : null,
+                genres: mappedGenres,
+                reviews: [], 
+                avgRating: 0
+            };
+
+            // 3. Open the Modal immediately
+            openModal(newlyAddedMovie);
+
+            // 4. Switch UI to Explore view
+            exploreView.classList.remove('view-hidden');
+            addView.classList.add('view-hidden');
+            navExplore.classList.add('active');
+            navAdd.classList.remove('active');
+            
+            // 5. Trigger background refresh
+            loadLibrary(); 
         });
     });
 });
